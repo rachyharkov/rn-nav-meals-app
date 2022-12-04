@@ -1,9 +1,10 @@
+import { useLayoutEffect } from 'react'
 import { View, Text, StyleSheet, FlatList } from 'react-native'
 import MealItem from '../components/MealItem'
 
-import { MEALS } from '../data/dummy-data'
+import { MEALS, CATEGORIES } from '../data/dummy-data'
 
-function MealsOverviewScreen({ route }) {
+function MealsOverviewScreen({ route, navigation }) {
 
     const catId = route.params.categoryId
 
@@ -11,8 +12,30 @@ function MealsOverviewScreen({ route }) {
         return mealItem.categoryIds.indexOf(catId) >= 0
     })
 
+    // dynamically set header title V2
+    useLayoutEffect(() => {
+        const categoryTitle = CATEGORIES.find((cat) => cat.id === catId).title
+
+        navigation.setOptions({
+            title: categoryTitle
+        })
+    }, [catId, navigation])
+
+
+
     function renderMealItem(itemData){
-        return <MealItem title={itemData.item.title} />
+
+        const item = itemData.item
+
+        const mealItemProps = {
+            title: item.title,
+            imageUrl: item.imageUrl,
+            affordability: item.affordability,
+            complexity: item.complexity,
+            duration: item.duration
+        }
+
+        return <MealItem {...mealItemProps} />
     }
 
     return(
